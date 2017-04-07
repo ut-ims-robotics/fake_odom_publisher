@@ -1,0 +1,3 @@
+fake_odom_publisher:
+  odom_frame: "odom"
+  base_frame: "base_footprint"

@@ -1,0 +1,7 @@
+<launch>
+	<!-- Load frames for fake_odom_publisher -->
+	<rosparam command="load" file="$(find fake_odom_publisher)/config/frames.yaml" />
+	
+	<!-- Launch the fake_odom_publisher node -->
+	<node name="fake_odom_publisher" pkg="fake_odom_publisher" type="fake_odom_publisher" respawn="true" output="screen"/>
+</launch>
