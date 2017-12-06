@@ -161,23 +161,37 @@ int main(int argc, char** argv)
 
         // Get the quaternion from "frameTransform" and store it into "odom_quat"
         geometry_msgs::Quaternion odom_quat;
-        tf::Quaternion tf_odom_quat = frameTransform.getRotation().normalized();
-
-        odom_quat.x = (double)tf_odom_quat.getX();
-        odom_quat.y = (double)tf_odom_quat.getY();
-        odom_quat.z = (double)tf_odom_quat.getZ();
-        odom_quat.w = (double)tf_odom_quat.getW();
-
-        // Create a "TransformStamped" message and start filling it
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
         odom_trans.header.frame_id = odom_frame;
         odom_trans.child_frame_id = base_frame;
 
-        odom_trans.transform.translation.x = frameTransform.getOrigin().x();
-        odom_trans.transform.translation.y = frameTransform.getOrigin().y();
-        odom_trans.transform.translation.z = 0.0;
-        odom_trans.transform.rotation = odom_quat;
+        if (transformRecieved)
+        {
+          tf::Quaternion tf_odom_quat = frameTransform.getRotation().normalized();
+
+          odom_quat.x = (double)tf_odom_quat.getX();
+          odom_quat.y = (double)tf_odom_quat.getY();
+          odom_quat.z = (double)tf_odom_quat.getZ();
+          odom_quat.w = (double)tf_odom_quat.getW();
+
+          odom_trans.transform.translation.x = frameTransform.getOrigin().x();
+          odom_trans.transform.translation.y = frameTransform.getOrigin().y();
+          odom_trans.transform.translation.z = 0.0;
+          odom_trans.transform.rotation = odom_quat;
+        }
+        else
+        {
+          odom_quat.x = 0;
+          odom_quat.y = 0;
+          odom_quat.z = 0;
+          odom_quat.w = 1;
+
+          odom_trans.transform.translation.x = 0;
+          odom_trans.transform.translation.y = 0;
+          odom_trans.transform.translation.z = 0.0;
+          odom_trans.transform.rotation = odom_quat;
+        }
 
         // DEBUG odom_frame TF
         ROS_DEBUG("Sending TF: px [%f]; py [%f] | qx [%f]; qy [%f]; qz [%f]; qw [%f] | from [%s] to [%s] \n",
